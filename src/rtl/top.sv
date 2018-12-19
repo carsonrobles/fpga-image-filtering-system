@@ -13,26 +13,27 @@ module top (
   input  wire         cts
 );
 
-  wire slow_clk;
+  // divided design clock
+  wire des_clk;
 
   clk_wiz_0 clk_div (
-    .clk_o (slow_clk),
-    .reset (~rst_n),
+    .clk_o  (des_clk),
+    .reset  (~rst_n),
     .locked ( ),
-    .clk_i (clk)
+    .clk_i  (clk)
   );
 
   fpga fpga_i (
-    .clk (slow_clk),
-    .rst_n,
-    .sw,
-    .led,
-    .an,
-    .seg,
-    .rxd,
-    .rts,
-    .txd,
-    .cts
+    .clk   (des_clk),
+    .rst_n (rst_n),
+    .sw    (sw),
+    .led   (led),
+    .an    (an),
+    .seg   (seg),
+    .rxd   (rxd),
+    .rts   (rts),
+    .txd   (txd),
+    .cts   (cts)
   );
 
 endmodule

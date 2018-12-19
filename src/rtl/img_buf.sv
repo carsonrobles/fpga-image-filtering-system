@@ -77,7 +77,7 @@ module img_buf (
       default : fsm_d = FILL;
     endcase
   end
-  
+
 
 
   logic [2:0] rd_vld_sft = '0;
@@ -99,14 +99,10 @@ module img_buf (
   always_ff @ (posedge clk) begin
     int i;
 
-    /*if (rst | done) begin
-      ram_sel_sft <= '{default : '0};
-    end else begin*/
-      ram_sel_sft[0] <= ram_sel;
+    ram_sel_sft[0] <= ram_sel;
 
-      for (i = 2; i > 0; i -= 1)
-        ram_sel_sft[i] <= ram_sel_sft[i-1];
-    //end
+    for (i = 2; i > 0; i -= 1)
+      ram_sel_sft[i] <= ram_sel_sft[i-1];
   end
 
   always_comb begin

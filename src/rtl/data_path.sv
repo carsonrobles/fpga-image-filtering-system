@@ -2,21 +2,20 @@
 `include "pixel_pkg.svh"
 
 module data_path (
-  input wire     clk,
-  input wire     rst,
+  input wire           clk,
+  input wire           rst,
 
-  input wire [3:0] filter_sel,
+  input wire     [3:0] filter_sel,
 
-  axis_if.slave  axis_i,
-  axis_if.master axis_o,
-  output wire full,
-  output wire empty
+  axis_if.slave        axis_i,
+  axis_if.master       axis_o
 );
 
-  axis_if #( .DATA_TYPE (pixel_pkg::pixel_t) ) axis_pix    ();
-  axis_if #( .DATA_TYPE (pixel_pkg::chunk_t) ) axis_buf    ();
-  axis_if #( .DATA_TYPE (pixel_pkg::chunk_t) ) axis_blur ();
-  axis_if #( .DATA_TYPE (pixel_pkg::chunk_t) ) axis_edge ();
+  // TODO: put filters in parallel
+  axis_if #( .DATA_TYPE (pixel_pkg::pixel_t) ) axis_pix     ();
+  axis_if #( .DATA_TYPE (pixel_pkg::chunk_t) ) axis_buf     ();
+  axis_if #( .DATA_TYPE (pixel_pkg::chunk_t) ) axis_blur    ();
+  axis_if #( .DATA_TYPE (pixel_pkg::chunk_t) ) axis_edge    ();
   axis_if #( .DATA_TYPE (pixel_pkg::chunk_t) ) axis_sharpen ();
 
   wire line;
@@ -69,21 +68,6 @@ module data_path (
     .axis_i (axis_blur),
     .axis_o (axis_edge)
   );
-
-  /*conv_int #(
-    .DIM    (3),
-    .KERNEL ('{
-      {-1, -1, -1},
-      {-1,  5, -1},
-      {-1, -1, -1}
-    })
-  ) conv_sharpen (
-    .clk    (clk),
-    .rst    (rst),
-    .en     (filter_sel[2]),
-    .axis_i (axis_edge),
-    .axis_o (axis_sharpen)
-  );*/
 
   chunk_serialize chunk_serialize_i (
     .clk    (clk),

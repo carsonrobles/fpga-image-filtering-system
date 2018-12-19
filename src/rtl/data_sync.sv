@@ -59,7 +59,7 @@ module data_sync (
     if (rst)
       width <= '0;
     else if (fsm == WIDTH && fsm_d == LENGTH)
-      width <= {byte_shift[3], byte_shift[2], byte_shift[1], byte_shift[0]};//logic'(byte_shift);
+      width <= {byte_shift[3], byte_shift[2], byte_shift[1], byte_shift[0]};
 
   // get length
   logic [31:0] length = '0;
@@ -68,7 +68,6 @@ module data_sync (
     if (rst)
       length <= '0;
     else if (fsm == LENGTH && fsm_d == DATA)
-      //length <= logic'(byte_shift);
       length <= {byte_shift[3], byte_shift[2], byte_shift[1], byte_shift[0]};
 
   // row count
@@ -100,11 +99,9 @@ module data_sync (
     if (rst || fsm != DATA || wcnt == width) begin
       wcnt <= '0;
     end else if (axis_i.ok) begin
-      //wcnt <= wcnt + &pcnt;
       wcnt <= wcnt + (pscnt == 3'b100);
     end
   end
-
 
   // shift in pixel data
   always_ff @ (posedge clk) begin
@@ -113,10 +110,6 @@ module data_sync (
     if (rst || fsm != DATA) begin
       pixel_shift <= '{default : '0};
     end else if (axis_i.ok) begin
-      /*pixel_shift[0] <= axis_i.data;
-
-      for (i = 2; i > 0; i -= 1)
-        pixel_shift[i] <= pixel_shift[i-1];*/
         unique case (pscnt)
           3'b001: pixel_shift[2] <= axis_i.data;
           3'b010: pixel_shift[1] <= axis_i.data;
@@ -136,13 +129,10 @@ module data_sync (
 
   always_comb axis_o.data = pixel;
 
-  // TODO (carson): valid is not quite right: doesn't hold for ready
+  // TODO: valid is not quite right: doesn't hold for ready (will need FIFO for back pressure)
   // drive out valid data
   always_ff @ (posedge clk) begin
     axis_o.vld <= (axis_i.ok && fsm == DATA && pscnt == 3'b100);
-
-    /*if (axis_i.ok && fsm == DATA && pscnt == 3'b100)
-      axis_o.data <= pixel;*/
   end
 
   // ready when load module is ready
@@ -163,6 +153,6 @@ module data_sync (
   end
 
   assign line = (wcnt == width  && fsm == DATA);
-  assign done = (rcnt == length && fsm == DONE);//(fsm  ==  DONE);
+  assign done = (rcnt == length && fsm == DONE);
 
 endmodule
