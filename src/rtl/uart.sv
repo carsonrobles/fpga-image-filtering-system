@@ -11,7 +11,6 @@ module uart #(
 
   output wire  txd,       // tx pins
   input  wire  cts,
-  output logic [2:0] state_dbg, // TODO
 
   axis_if.master  axis_rx,   // received uart data
   axis_if.slave   axis_tx    // uart data to transmit
